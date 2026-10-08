@@ -1,0 +1,6 @@
+{
+  "name": "Feedback IA & Analytics - La Celada | JOIN",
+  "description": "Sistema integral de encuestas post-capacitación y análisis analítico de NPS, CSAT e impacto para el programa de IA en La Celada.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

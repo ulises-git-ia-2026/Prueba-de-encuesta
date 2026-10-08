@@ -1,0 +1,54 @@
+{
+  "entities": {
+    "SurveyResponse": {
+      "title": "SurveyResponse",
+      "description": "Respuesta validada y sanitizada de la encuesta post-capacitación del Módulo 1 en La Celada.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "timestamp": { "type": "string", "maxLength": 64 },
+        "empresa": { "type": "string", "maxLength": 64 },
+        "docente": { "type": "string", "maxLength": 64 },
+        "capacitacion": { "type": "string", "maxLength": 128 },
+        "modulo": { "type": "string", "maxLength": 128 },
+        "tema": { "type": "string", "maxLength": 256 },
+        "fecha": { "type": "string", "maxLength": 32 },
+        "horario": { "type": "string", "maxLength": 32 },
+        "sesionNumero": { "type": "number" },
+        "npsScore": { "type": "number" },
+        "npsCategory": { "type": "string", "enum": ["promotor", "pasivo", "detractor"] },
+        "claridadDocente": { "type": "number" },
+        "dominioTema": { "type": "number" },
+        "dinamismoRitmo": { "type": "number" },
+        "predisposicionDudas": { "type": "number" },
+        "utilidadLaboral": { "type": "number" },
+        "calidadMateriales": { "type": "number" },
+        "nivelDificultad": { "type": "string", "maxLength": 64 },
+        "loMasValioso": { "type": "string", "maxLength": 1000 },
+        "sugerenciasParaPablo": { "type": "string", "maxLength": 1000 },
+        "areaParticipante": { "type": "string", "maxLength": 64 },
+        "nombreParticipante": { "type": "string", "maxLength": 64 }
+      },
+      "required": [
+        "id",
+        "timestamp",
+        "empresa",
+        "docente",
+        "modulo",
+        "npsScore",
+        "claridadDocente",
+        "dominioTema",
+        "dinamismoRitmo",
+        "predisposicionDudas",
+        "utilidadLaboral",
+        "areaParticipante"
+      ]
+    }
+  },
+  "firestore": {
+    "/encuestas_modulo1/{responseId}": {
+      "schema": "SurveyResponse",
+      "description": "Colección de respuestas protegidas y auditadas para el Módulo 1 de La Celada."
+    }
+  }
+}

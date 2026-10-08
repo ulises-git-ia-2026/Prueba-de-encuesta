@@ -1,0 +1,57 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 1. GLOBAL SAFETY NET (Default Deny)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    // Strict validation blueprint for SurveyResponse
+    function isValidSurveyResponse(data) {
+      return data.keys().hasAll([
+        'id', 'timestamp', 'empresa', 'docente', 'modulo',
+        'npsScore', 'claridadDocente', 'dominioTema', 'dinamismoRitmo',
+        'predisposicionDudas', 'utilidadLaboral', 'areaParticipante'
+      ]) &&
+      data.keys().hasOnly([
+        'id', 'timestamp', 'empresa', 'docente', 'capacitacion', 'modulo',
+        'tema', 'fecha', 'horario', 'sesionNumero', 'npsScore', 'npsCategory',
+        'claridadDocente', 'dominioTema', 'dinamismoRitmo', 'predisposicionDudas',
+        'utilidadLaboral', 'calidadMateriales', 'nivelDificultad',
+        'loMasValioso', 'sugerenciasParaPablo', 'areaParticipante', 'nombreParticipante'
+      ]) &&
+      data.empresa == 'La Celada' &&
+      data.docente == 'Pablo Santoro' &&
+      data.npsScore is number && data.npsScore >= 0 && data.npsScore <= 10 &&
+      data.claridadDocente is number && data.claridadDocente >= 1 && data.claridadDocente <= 5 &&
+      data.dominioTema is number && data.dominioTema >= 1 && data.dominioTema <= 5 &&
+      data.dinamismoRitmo is number && data.dinamismoRitmo >= 1 && data.dinamismoRitmo <= 5 &&
+      data.predisposicionDudas is number && data.predisposicionDudas >= 1 && data.predisposicionDudas <= 5 &&
+      data.utilidadLaboral is number && data.utilidadLaboral >= 1 && data.utilidadLaboral <= 5 &&
+      data.loMasValioso is string && data.loMasValioso.size() <= 1000 &&
+      data.areaParticipante is string && data.areaParticipante.size() <= 64;
+    }
+
+    // Colección de respuestas Módulo 1 (La Celada)
+    match /encuestas_modulo1/{responseId} {
+      // Create: Permite registrar una encuesta siempre que cumpla estrictamente el esquema de validación
+      allow create: if isValidId(responseId) && isValidSurveyResponse(incoming());
+
+      // Update y Delete: Inmutables para prevenir manipulación o alteración de respuestas
+      allow update, delete: if false;
+
+      // Read: Lectura restringida para proteger la privacidad de los colaboradores
+      allow read: if request.auth != null;
+    }
+  }
+}
